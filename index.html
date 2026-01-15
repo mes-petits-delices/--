@@ -1,153 +1,107 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes Petits Délices | Que Du Goût</title>
-    <link rel="stylesheet" href="style.css"> 
-</head>
-<body>
-    <header>
-        <a href="#" class="logo">Resto<span>.</span></a>
-        <div class="menuToggle" onclick="toggleMenu();"></div>
-        <ul class="navbar">
-            <li><a href="#accueil" onclick="toggleMenu();">Accueil</a></li>
-            <li><a href="#propos" onclick="toggleMenu();">À propos</a></li>
-            <li><a href="#menu" onclick="toggleMenu();">Menu</a></li>
-            <li><a href="#avis" onclick="toggleMenu();">Avis</a></li>
-            <li><a href="#contact" onclick="toggleMenu();">Contact</a></li>
-        </ul>
-    </header>
+// 1. IMPORTATION FIREBASE
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    <section class="banniere" id="accueil">
-        <div class="contenu">
-            <h2>Que Du Goût</h2>
-            <p>Découvrez une expérience culinaire unique avec nos créations artisanales.</p>
-            <a href="#menu" class="btn">Notre Menu</a>
-        </div>
-    </section>
+// 2. TA CONFIGURATION (Extraite de tes images)
+const firebaseConfig = {
+  apiKey: "AIzaSyBq5EdIl3eyS3Ima3FIHfkWEnzPoczkXFc",
+  authDomain: "site-boutique-96f52.firebaseapp.com",
+  projectId: "site-boutique-96f52",
+  storageBucket: "site-boutique-96f52.firebasestorage.app",
+  messagingSenderId: "1075677172691",
+  appId: "1:1075677172691:web:8caae8a9d3b455e1011526",
+  measurementId: "G-Q2MQR2P0WS"
+};
 
-    <section class="qualite">
-        <div class="contenu-qualite">
-            <div class="box-qualite">
-                <img src="https://cdn-icons-png.flaticon.com/512/3227/3227847.png" alt="Blé">
-                <h3>Farine Bio</h3>
-                <p>Issue de circuits courts</p>
-            </div>
-            <div class="box-qualite">
-                <img src="https://cdn-icons-png.flaticon.com/512/3050/3050158.png" alt="Oeuf">
-                <h3>Œufs Frais</h3>
-                <p>Poules élevées en plein air</p>
-            </div>
-            <div class="box-qualite">
-                <img src="https://cdn-icons-png.flaticon.com/512/3141/3141042.png" alt="Beurre">
-                <h3>Beurre AOP</h3>
-                <p>Pour un feuilletage parfait</p>
-            </div>
-        </div>
-    </section>
+// 3. INITIALISATION
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const avisCol = collection(db, "avis");
 
-    <section class="propos" id="propos">
-        <div class="row">
-            <div class="col50">
-                <h2 class="titre-texte"><span>A</span> Propos de Nous</h2>
-                <p>Nous utilisons des produits frais et locaux pour garantir la meilleure qualité possible à nos clients.<br><br>Notre équipe est passionnée par l'art de la cuisine et l'innovation constante.</p>
-            </div>
-            <div class="col50">
-                <div class="imgAj">
-                    <img src="https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg" alt="image propos">
+// --- SECTION NAVIGATION & MENU ---
+
+// Menu Sticky au scroll
+window.addEventListener('scroll', function(){
+    const header = document.querySelector('header');
+    header.classList.toggle("sticky", window.scrollY > 0);
+});
+
+// Menu Mobile (Toggle)
+window.toggleMenu = function() {
+    const navbar = document.querySelector('.navbar');
+    navbar.classList.toggle('active');
+}
+
+// --- SECTION GALERIE ---
+
+window.ouvrirGalerie = function(type) {
+    const modale = document.getElementById('fenetreGalerie');
+    const titre = document.getElementById('titreGalerie');
+    const grille = document.getElementById('contenuPhotos');
+    grille.innerHTML = "";
+    
+    if (type === 'gateaux') {
+        titre.innerText = "Nos Spécialités Sucrées";
+        grille.innerHTML = `<div><img src="https://images.pexels.com/photos/1070850/pexels-photo-1070850.jpeg"><p>Gâteau Royal</p></div><div><img src="https://images.pexels.com/photos/2144112/pexels-photo-2144112.jpeg"><p>Tarte Fraise</p></div>`;
+    } else if (type === 'burgers') {
+        titre.innerText = "Nos Burgers Gourmet";
+        grille.innerHTML = `<div><img src="https://images.pexels.com/photos/1633525/pexels-photo-1633525.jpeg"><p>Le Classique</p></div><div><img src="https://images.pexels.com/photos/1199957/pexels-photo-1199957.jpeg"><p>Le Montagnard</p></div>`;
+    }
+    modale.style.display = "block";
+}
+
+window.fermerGalerie = function() {
+    document.getElementById('fenetreGalerie').style.display = "none";
+}
+
+// Fermer la galerie au clic sur le fond
+window.onclick = function(event) {
+    const modale = document.getElementById('fenetreGalerie');
+    if (event.target == modale) {
+        modale.style.display = "none";
+    }
+}
+
+// --- SECTION SYSTÈME D'AVIS (FIREBASE) ---
+
+// 1. Envoyer un avis
+const form = document.querySelector('#formAvis');
+if (form) {
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const prenom = form.name.value;
+        const texte = form.message.value;
+
+        try {
+            await addDoc(avisCol, {
+                name: prenom,
+                message: texte,
+                date: new Date()
+            });
+            form.reset();
+            alert("Merci ! Votre avis a été publié.");
+        } catch (error) {
+            console.error("Erreur d'envoi : ", error);
+        }
+    });
+}
+
+// 2. Afficher les avis en temps réel
+const listeAvis = document.querySelector('#listeAvis');
+if (listeAvis) {
+    const q = query(avisCol, orderBy("date", "desc"));
+
+    onSnapshot(q, (snapshot) => {
+        listeAvis.innerHTML = ""; 
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            const bulle = `
+                <div class="bulle-avis">
+                    <p>"${data.message}"</p>
+                    <h4>- ${data.name}</h4>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="moment">
-        <div class="carte-moment">
-            <div class="badge-special">Limité</div>
-            <div class="text-moment">
-                <h3>La suggestion du chef</h3>
-                <h2>Le Fraisier du Weekend</h2>
-                <p>Une crème mousseline légère, des fraises de saison et un biscuit moelleux. Disponible uniquement samedi et dimanche !</p>
-                <a href="#contact" class="btn">Commander</a>
-            </div>
-        </div>
-    </section>
-
-    <section class="menu" id="menu">
-        <div class="titre">
-            <h2 class="titre-texte">Notre <span>M</span>enu</h2>
-            <p>Cliquez sur une catégorie pour voir nos délices.</p>
-        </div>
-        <div class="contenu">
-            <div class="box" onclick="ouvrirGalerie('gateaux')">
-                <div class="imbox">
-                    <img src="https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg" alt="Gâteaux">
-                </div>
-                <div class="text"><h3>Spécialités Sucrées</h3></div>
-            </div>
-            <div class="box" onclick="ouvrirGalerie('burgers')">
-                <div class="imbox">
-                    <img src="https://images.pexels.com/photos/70497/pexels-photo-70497.jpeg" alt="Burgers">
-                </div>
-                <div class="text"><h3>Menus Gourmands</h3></div>
-            </div>
-        </div>
-    </section>
-
-    <section class="avis" id="avis">
-        <div class="titre">
-            <h2 class="titre-texte">Ce que nos <span>C</span>lients disent</h2>
-        </div>
-        <div class="contenu-avis">
-            <div class="bulle-avis">
-                <p>"Le gâteau d'anniversaire de mon fils était magnifique et délicieux ! Une équipe à l'écoute."</p>
-                <h4>- Marie L.</h4>
-            </div>
-            <div class="bulle-avis">
-                <p>"Le meilleur Paris-Brest que j'ai mangé. On sent la qualité des ingrédients."</p>
-                <h4>- Thomas V.</h4>
-            </div>
-        </div>
-    </section>
-
-    <section class="contact" id="contact">
-        <div class="titre">
-            <h2 class="titre-texte"><span>C</span>ontact</h2>
-            <p>Retrouvez-nous sur nos réseaux ou appelez-nous !</p>
-        </div>
-        <div class="contenu-contact">
-            <div class="contact-box">
-                <a href="tel:+33600000000">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3059/3059590.png" alt="Téléphone">
-                    <h3>Téléphone</h3>
-                    <p>06 00 00 00 00</p>
-                </a>
-            </div>
-            <div class="contact-box">
-                <a href="https://www.instagram.com" target="_blank">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
-                    <h3>Instagram</h3>
-                    <p>@mes_petits_delices</p>
-                </a>
-            </div>
-            <div class="contact-box">
-                <a href="https://www.tiktok.com" target="_blank">
-                    <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TikTok">
-                    <h3>TikTok</h3>
-                    <p>@mes_petits_delices</p>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <div id="fenetreGalerie" class="modale">
-        <div class="modale-contenu">
-            <span class="bouton-fermer" onclick="fermerGalerie()">&times;</span>
-            <h2 id="titreGalerie">Nos créations</h2>
-            <div class="grille-photos" id="contenuPhotos"></div>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+            `;
+            listeAvis.insertAdjacentHTML('beforeend', bulle);
+        });
+    });
+}
