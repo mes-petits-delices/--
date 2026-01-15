@@ -54,7 +54,7 @@ window.fermerGalerie = function() {
     document.getElementById('fenetreGalerie').style.display = "none";
 }
 
-// Fermer la galerie si on clique sur le fond noir
+// Fermer la galerie au clic sur le fond
 window.onclick = function(event) {
     const modale = document.getElementById('fenetreGalerie');
     if (event.target == modale) {
@@ -82,7 +82,6 @@ if (form) {
             alert("Merci ! Votre avis a été publié.");
         } catch (error) {
             console.error("Erreur d'envoi : ", error);
-            alert("Une erreur est survenue.");
         }
     });
 }
