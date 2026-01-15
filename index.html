@@ -30,19 +30,19 @@
     <section class="qualite">
         <div class="contenu-qualite">
             <div class="box-qualite">
-                <img src="https://cdn-icons-png.flaticon.com/512/3227/3227847.png" alt="Farine">
+                <img src="https://cdn-icons-png.flaticon.com/512/3227/3227847.png" alt="Blé">
                 <h3>Farine Bio</h3>
                 <p>Issue de circuits courts</p>
             </div>
             <div class="box-qualite">
-                <img src="https://cdn-icons-png.flaticon.com/512/3050/3050158.png" alt="Oeufs">
+                <img src="https://cdn-icons-png.flaticon.com/512/3050/3050158.png" alt="Oeuf">
                 <h3>Œufs Frais</h3>
                 <p>Poules élevées en plein air</p>
             </div>
             <div class="box-qualite">
                 <img src="https://cdn-icons-png.flaticon.com/512/3141/3141042.png" alt="Beurre">
                 <h3>Beurre AOP</h3>
-                <p>Pour un goût authentique</p>
+                <p>Pour un feuilletage parfait</p>
             </div>
         </div>
     </section>
@@ -67,7 +67,7 @@
             <div class="text-moment">
                 <h3>La suggestion du chef</h3>
                 <h2>Le Fraisier du Weekend</h2>
-                <p>Disponible uniquement samedi et dimanche !</p>
+                <p>Une crème mousseline légère, des fraises de saison et un biscuit moelleux. Disponible uniquement samedi et dimanche !</p>
                 <a href="#contact" class="btn">Commander</a>
             </div>
         </div>
@@ -78,3 +78,76 @@
             <h2 class="titre-texte">Notre <span>M</span>enu</h2>
             <p>Cliquez sur une catégorie pour voir nos délices.</p>
         </div>
+        <div class="contenu">
+            <div class="box" onclick="ouvrirGalerie('gateaux')">
+                <div class="imbox">
+                    <img src="https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg" alt="Gâteaux">
+                </div>
+                <div class="text"><h3>Spécialités Sucrées</h3></div>
+            </div>
+            <div class="box" onclick="ouvrirGalerie('burgers')">
+                <div class="imbox">
+                    <img src="https://images.pexels.com/photos/70497/pexels-photo-70497.jpeg" alt="Burgers">
+                </div>
+                <div class="text"><h3>Menus Gourmands</h3></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="avis" id="avis">
+        <div class="titre">
+            <h2 class="titre-texte">Ce que nos <span>C</span>lients disent</h2>
+        </div>
+        <div class="contenu-avis">
+            <div class="bulle-avis">
+                <p>"Le gâteau d'anniversaire de mon fils était magnifique et délicieux ! Une équipe à l'écoute."</p>
+                <h4>- Marie L.</h4>
+            </div>
+            <div class="bulle-avis">
+                <p>"Le meilleur Paris-Brest que j'ai mangé. On sent la qualité des ingrédients."</p>
+                <h4>- Thomas V.</h4>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <div class="titre">
+            <h2 class="titre-texte"><span>C</span>ontact</h2>
+            <p>Retrouvez-nous sur nos réseaux ou appelez-nous !</p>
+        </div>
+        <div class="contenu-contact">
+            <div class="contact-box">
+                <a href="tel:+33600000000">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3059/3059590.png" alt="Téléphone">
+                    <h3>Téléphone</h3>
+                    <p>06 00 00 00 00</p>
+                </a>
+            </div>
+            <div class="contact-box">
+                <a href="https://www.instagram.com" target="_blank">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="Instagram">
+                    <h3>Instagram</h3>
+                    <p>@mes_petits_delices</p>
+                </a>
+            </div>
+            <div class="contact-box">
+                <a href="https://www.tiktok.com" target="_blank">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TikTok">
+                    <h3>TikTok</h3>
+                    <p>@mes_petits_delices</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <div id="fenetreGalerie" class="modale">
+        <div class="modale-contenu">
+            <span class="bouton-fermer" onclick="fermerGalerie()">&times;</span>
+            <h2 id="titreGalerie">Nos créations</h2>
+            <div class="grille-photos" id="contenuPhotos"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
